@@ -2,12 +2,14 @@ import pandas as pd
 import re
 import json
 import unicodedata
+import html
 import sys
 
 def clean_name(s):
     if pd.isna(s):
         return ''
     s = str(s).strip()
+    s = html.unescape(s)
     s = unicodedata.normalize('NFKC', s)
     s = re.sub(r'\d+$', '', s).strip()
     return s
@@ -68,7 +70,7 @@ def match(tender_path, supply_path):
             amt = round(price * qty, 2)
             matched_list.append({
                 'id': int(row[tender_id_col]),
-                'goods_name': str(sp[supply_name_col]),
+                'goods_name': html.unescape(str(sp[supply_name_col])),
                 'price': f"{price:.2f}",
                 'amt': f"{amt:.2f}"
             })
